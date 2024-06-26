@@ -235,8 +235,6 @@ async function main() {
   ];
 
   const uri = "mongodb://localhost:27017";
-  //  "mongodb+srv://dmitrymarklund:Annaganna777%2A@cluster0.iqvoct7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
   const client = new MongoClient(uri, {
     serverApi: {
       version: ServerApiVersion.v1,
