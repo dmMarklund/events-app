@@ -15,3 +15,6 @@ host: http://68.183.2.254:5001/
 - Exclude past events
 - Favorites feature
 - Automatic data updates
+
+
+2024-06-29 Images saved as base64
