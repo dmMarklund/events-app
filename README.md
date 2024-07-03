@@ -17,8 +17,8 @@ Images saved as base64
 #TODO#
 - Calendar integration
 - Filters by city
-~~- Search functionality~~
-~~- Links to Facebook pages~~
+- ~~Search functionality~~
+- ~~Links to Facebook pages~~
 - Exclude past events
 - Favorites feature
 - Automatic data updates
