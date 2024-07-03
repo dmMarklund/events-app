@@ -23,5 +23,6 @@ Images saved as base64
 - Favorites feature
 - Automatic data updates
 - New page for each event with detailed information and location.
+- Better styling
 
 
