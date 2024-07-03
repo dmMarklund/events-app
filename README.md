@@ -16,9 +16,9 @@ host: http://68.183.2.254:5001/
 - Favorites feature
 - Automatic data updates
 
-2024-07-03
+- 2024-07-03
 Search with text highlight.
 Optimization of images before saving.
 Database pagination on server and app.
-2024-06-29 
+- 2024-06-29 
 Images saved as base64
