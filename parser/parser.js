@@ -1,5 +1,8 @@
 const puppeteer = require("puppeteer");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+require("dotenv").config();
+const axios = require("axios");
+const sharp = require("sharp");
 
 async function scrapePage(url) {
   const browser = await puppeteer.launch({
@@ -27,7 +30,7 @@ async function scrapePage(url) {
     });
   }, targetLocale);
 
-  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.goto(url, { waitUntil: ["domcontentloaded", "networkidle2"] });
 
   const declineButton = await page.$(
     'div[aria-label*="Decline optional cookies"], div[aria-label*="Neka valfria cookies"], div[aria-label*="Optionele cookies afwijzen"]'
@@ -90,6 +93,33 @@ async function scrapePage(url) {
   return Array.from(uniqueLinks);
 }
 
+async function fetchImageAsBase64(url) {
+  try {
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    const buffer = Buffer.from(response.data, "binary");
+
+    // Get image metadata
+    const metadata = await sharp(buffer).metadata();
+
+    // Resize image to 50% of the original width while maintaining the aspect ratio
+    const resizedBuffer = await sharp(buffer)
+      .resize({
+        width: Math.round(metadata.width / 2),
+        withoutEnlargement: true,
+      })
+      .jpeg({ quality: 80, progressive: true }) // Optimize the image
+      .toBuffer();
+
+    // Convert the optimized image buffer to base64
+    const base64Image = resizedBuffer.toString("base64");
+
+    return base64Image;
+  } catch (error) {
+    console.error("Error fetching or processing image:", error);
+    return null;
+  }
+}
+
 async function scrapeEventPage(url) {
   const browser = await puppeteer.launch({
     headless: true,
@@ -117,7 +147,7 @@ async function scrapeEventPage(url) {
     });
   }, targetLocale);
 
-  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.goto(url, { waitUntil: ["domcontentloaded", "networkidle2"] });
 
   const declineButton = await page.$(
     'div[aria-label*="Decline optional cookies"], div[aria-label*="Neka valfria cookies"], div[aria-label*="Optionele cookies afwijzen"]'
@@ -153,6 +183,11 @@ async function scrapeEventPage(url) {
       nestedImgElement
     );
 
+    let eventImage = null;
+    if (eventImageSrc) {
+      eventImage = await fetchImageAsBase64(eventImageSrc);
+    }
+
     const spanWithYear = await page.evaluate(() => {
       const spanElements = document.querySelectorAll("span");
       for (const span of spanElements) {
@@ -171,8 +206,9 @@ async function scrapeEventPage(url) {
       eventNumber: eventNumber,
       eventDescription: ogTitleContent,
       eventName: eventName,
-      eventImageSrc: eventImageSrc,
+      eventImage: eventImage,
       eventTiming: spanWithYear,
+      eventLink: url,
     };
   } else {
     console.log("Nested span not found.");
@@ -232,9 +268,12 @@ async function main() {
     "https://www.facebook.com/WillamsUppsala/upcoming_hosted_events",
     "https://www.facebook.com/Bulgasalmetal/upcoming_hosted_events",
     "https://www.facebook.com/dodsmassa/upcoming_hosted_events",
+    "https://www.facebook.com/fryshusetevent/upcoming_hosted_events",
+    "https://www.facebook.com/kulturkvarterethallarna/upcoming_hosted_events",
   ];
 
   const uri = "mongodb://localhost:27017";
+  //const uri = process.env.MONGODB_URI;
   const client = new MongoClient(uri, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -245,7 +284,7 @@ async function main() {
 
   try {
     await client.connect();
-    console.log("Connected to MongoDB Atlas");
+    console.log("Connected to MongoDB");
     const database = client.db("events_db");
     const collection = database.collection("events");
 
