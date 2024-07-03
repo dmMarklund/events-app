@@ -10,7 +10,7 @@ host: http://68.183.2.254:5001/
 - 2024-07-03
 Search with text highlight.
 Optimization of images before saving.
-Database pagination on server and app.
+Database pagination on server and app. Loading...
 - 2024-06-29 
 Images saved as base64
 
