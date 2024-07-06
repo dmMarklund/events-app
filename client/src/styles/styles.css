@@ -24,7 +24,7 @@ code {
 
 
 
-.container {
+.calendar-page, .event-list-page {
   width: 80%;
   margin: auto;
   height: 99vh;

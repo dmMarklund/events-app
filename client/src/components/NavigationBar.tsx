@@ -1,14 +1,5 @@
 import React from "react";
-
-interface NavigationBarProps {
-  searchInput: string;
-  setSearchInput: (input: string) => void;
-  handleSearch: () => void;
-  resetSearch: () => void;
-  availableCities: string[];
-  selectedCity: string;
-  setSelectedCity: (city: string) => void;
-}
+import { NavigationBarProps } from "../types/types";
 
 const NavigationBar: React.FC<NavigationBarProps> = ({
   searchInput,
@@ -39,9 +30,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         ))}
       </select>
       <button onClick={handleSearch}>Search</button>
-
       <button onClick={resetSearch}>Reset</button>
-
       <a href="/">Home</a>
       <a href="/calendar">Calendar</a>
     </div>
