@@ -14,6 +14,13 @@ const Calendar: React.FC = () => {
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
+
+  const [events_, setEvents] = useState<Event[]>([]);
+
+  const clearEvents = () => {
+    setEvents([]);
+  };
+
   const [selectedCity, setSelectedCity] = useState("All");
   const {
     allEvents,
@@ -31,20 +38,22 @@ const Calendar: React.FC = () => {
     handleSearch,
     resetSearch,
   } = useSearch({
+    filterEvents,
+    currentMonth,
     selectedCity,
   });
 
   useEffect(() => {
     filterEvents(currentMonth, selectedCity);
-  }, [allEvents, currentMonth, selectedCity]);
+  }, [allEvents, currentMonth, selectedCity, searchQuery]);
 
   // Ensure events are filtered correctly on the initial load
   useEffect(() => {
     filterEvents(currentMonth, selectedCity);
   }, []);
 
-  const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const [monthName, year] = event.target.value.split(" ");
+  const handleMonthChange = (monthYearString: string) => {
+    const [monthName, year] = monthYearString.split(" ");
     const month = new Date(`${monthName} 1, ${year}`).getMonth();
     setCurrentMonth({ month, year: parseInt(year) });
   };
@@ -56,43 +65,67 @@ const Calendar: React.FC = () => {
         setSearchInput={setSearchInput}
         handleSearch={handleSearch}
         resetSearch={resetSearch}
+        clearEvents={clearEvents}
         availableCities={availableCities}
         selectedCity={selectedCity}
         setSelectedCity={setSelectedCity}
       />
-      <div className="month-selector">
-        <select
-          value={`${getMonthName(currentMonth.month)} ${currentMonth.year}`}
-          onChange={handleMonthChange}
-        >
-          {availableMonths.map((monthYear) => (
-            <option
-              key={`${monthYear.month}-${monthYear.year}`}
-              value={`${getMonthName(monthYear.month)} ${monthYear.year}`}
-            >
-              {getMonthName(monthYear.month)} {monthYear.year}
-            </option>
-          ))}
-        </select>
-      </div>
+
       {loading ? (
         <div className="loading">
           <span className="loader" />
         </div>
       ) : (
-        <div className="event-grid">
-          {events
-            .filter((event) =>
-              event.eventName.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            .map((event) => (
-              <EventCard
-                key={event.eventName}
-                event={event}
-                searchTerm={searchQuery}
-              />
-            ))}
-        </div>
+        <>
+          <div className="month-selector-container">
+            <div className="month-selector">
+              {availableMonths.map((monthYear) => (
+                <div
+                  key={`${monthYear.month}-${monthYear.year}`}
+                  className={`month-item ${
+                    currentMonth.month === monthYear.month &&
+                    currentMonth.year === monthYear.year
+                      ? "selected"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    handleMonthChange(
+                      `${getMonthName(monthYear.month)} ${monthYear.year}`
+                    )
+                  }
+                >
+                  {getMonthName(monthYear.month)} {monthYear.year}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {events.filter((event) =>
+            event.eventName.toLowerCase().includes(searchQuery.toLowerCase())
+          ).length === 0 ? (
+            <div className="event-grid">
+              <div className="no-events-found">
+                <span>No events found</span>
+              </div>
+            </div>
+          ) : (
+            <div className="event-grid">
+              {events
+                .filter((event) =>
+                  event.eventName
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+                )
+                .map((event) => (
+                  <EventCard
+                    key={event.eventName}
+                    event={event}
+                    searchTerm={searchQuery}
+                  />
+                ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

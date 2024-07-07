@@ -1,6 +1,7 @@
 import React from "react";
 import { Event } from "../types/types";
 import formatDescription from "../utils/formatDescription";
+import { v4 as uuidv4 } from "uuid";
 
 interface EventCardProps {
   event: Event;
@@ -8,16 +9,24 @@ interface EventCardProps {
 }
 
 const highlightSearchTerm = (
-  text: string,
-  searchTerm: string
+  text: string | unknown, // unknown is a type that can be any value
+  searchTerm?: string
 ): JSX.Element[] => {
   if (!searchTerm) return [<>{text}</>];
-  const parts = text.split(new RegExp(`(${searchTerm})`, "gi"));
-  return parts.map((part, index) =>
-    part.toLowerCase() === searchTerm.toLowerCase() ? (
-      <mark key={index}>{part}</mark>
+  let textString: string;
+  if (typeof text === "string") {
+    textString = text;
+  } else if (text !== null && text !== undefined) {
+    textString = text.toString();
+  } else {
+    textString = "";
+  }
+  const parts = textString.split(new RegExp(`(${searchTerm})`, "gi"));
+  return parts.map((part: string) =>
+    part.toLowerCase() === (searchTerm || "").toLowerCase() ? (
+      <mark key={uuidv4()}>{part}</mark>
     ) : (
-      <span key={index}>{part}</span>
+      <span key={uuidv4()}>{part}</span>
     )
   );
 };
@@ -33,32 +42,31 @@ const EventCard: React.FC<EventCardProps> = ({ event, searchTerm }) => {
         className="event-image"
       />
       <div className="event-details">
-        <h2>{highlightSearchTerm(event.eventName, searchTerm || "")}</h2>
+        <h2>
+          {searchTerm
+            ? highlightSearchTerm(event.eventName, searchTerm)
+            : event.eventName}
+        </h2>
         <p>
-          {formattedDescription.props.children.map(
-            (
-              part:
-                | string
-                | number
-                | boolean
-                | React.ReactElement<
-                    any,
-                    string | React.JSXElementConstructor<any>
-                  >
-                | Iterable<React.ReactNode>
-                | null
-                | undefined,
-              index: React.Key | null | undefined
-            ) => (
-              <React.Fragment key={index}>
-                {typeof part === "string"
-                  ? highlightSearchTerm(part, searchTerm || "")
-                  : part}
-              </React.Fragment>
-            )
-          )}
+          {typeof formattedDescription === "string"
+            ? formattedDescription
+            : React.Children.map(
+                formattedDescription.props.children,
+                (child) => {
+                  if (typeof child === "string") {
+                    return highlightSearchTerm(child, searchTerm);
+                  } else {
+                    return child;
+                  }
+                }
+              )}
         </p>
-        <a href={event.eventLink} target="_blank" rel="noopener noreferrer">
+        <a
+          href={event.eventLink}
+          className="event-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Event Link
         </a>
       </div>

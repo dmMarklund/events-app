@@ -1,22 +1,32 @@
 import { useState } from "react";
+import { MonthYear } from "../types/types";
+import { useNavigate } from "react-router-dom";
 
 interface UseSearchProps {
+  filterEvents: (monthYear: MonthYear, city: string, query?: string) => void;
+  currentMonth: MonthYear;
   selectedCity: string;
 }
-const useSearch = ({ selectedCity }: UseSearchProps) => {
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+
+const useSearch = ({
+  filterEvents,
+  currentMonth,
+  selectedCity,
+}: UseSearchProps) => {
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
 
   const handleSearch = () => {
-    if (selectedCity.trim() !== "") {
-      return;
-    }
+    navigate("/calendar");
     setSearchQuery(searchInput);
+    filterEvents(currentMonth, selectedCity, searchInput);
   };
 
   const resetSearch = () => {
     setSearchInput("");
     setSearchQuery("");
+    filterEvents(currentMonth, selectedCity, "");
   };
 
   return {

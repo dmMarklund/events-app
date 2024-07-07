@@ -13,6 +13,12 @@ const EventList: React.FC = () => {
 
   const [selectedCity, setSelectedCity] = useState("All");
 
+  const [events_, setEvents] = useState<Event[]>([]);
+
+  const clearEvents = () => {
+    setEvents([]);
+  };
+
   const { allEvents, events, availableCities, loading, filterEvents } =
     useEvents();
 
@@ -23,12 +29,14 @@ const EventList: React.FC = () => {
     handleSearch,
     resetSearch,
   } = useSearch({
+    filterEvents,
+    currentMonth,
     selectedCity,
   });
 
   useEffect(() => {
     filterEvents(currentMonth, selectedCity);
-  }, [allEvents, currentMonth, selectedCity, searchQuery]);
+  }, [allEvents, currentMonth, searchQuery]);
 
   const getUpcomingEvents = (events: Event[]): Event[] => {
     const today = new Date();
@@ -58,6 +66,7 @@ const EventList: React.FC = () => {
         setSearchInput={setSearchInput}
         handleSearch={handleSearch}
         resetSearch={resetSearch}
+        clearEvents={clearEvents}
         availableCities={availableCities}
         selectedCity={selectedCity}
         setSelectedCity={setSelectedCity}
@@ -68,18 +77,28 @@ const EventList: React.FC = () => {
         </div>
       ) : (
         <>
-          <h1>Upcoming Events</h1>
-          <div className="event-grid">
-            {getUpcomingEvents(events).map((event) => (
-              <EventCard
-                key={event.eventNumber}
-                event={event}
-                searchTerm={searchQuery}
-              />
-            ))}
-          </div>
+          <h1 className="list-h1">Upcoming Events</h1>
+          {getUpcomingEvents(events).length === 0 ? (
+            <div className="event-grid">
+              <div className="no-events-found">
+                <span>No events found</span>
+              </div>
+            </div>
+          ) : (
+            <div className="event-grid">
+              {getUpcomingEvents(events).map((event) => (
+                <EventCard
+                  key={event.eventNumber}
+                  event={event}
+                  searchTerm={searchQuery}
+                />
+              ))}
+            </div>
+          )}
 
-          <h1>Hot Events</h1>
+          <h1 className="list-h1">
+            <span className="flaming-text">Hot</span> Events
+          </h1>
           <div className="event-grid">
             {getHotEvents(allEvents).map((event) => (
               <EventCard
