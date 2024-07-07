@@ -7,6 +7,8 @@ host: http://68.183.2.254:5001/
 4. Fetch data to the server on a Digital Ocean droplet.
 5. Deploy and run a React/TypeScript application to present the data.
 
+- 2024-07-06
+  Improved component layout. Upcoming events, hot events.
 - 2024-07-03
 Search with text highlight.
 Optimization of images before saving.
@@ -16,10 +18,10 @@ Images saved as base64
 
 #TODO#
 - Calendar integration
-- Filters by city
+- ~~Filters by city~~
 - ~~Search functionality~~
 - ~~Links to Facebook pages~~
-- Exclude past events
+- ~~Exclude past events~~
 - Favorites feature
 - Automatic data updates
 - New page for each event with detailed information and location.
