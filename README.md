@@ -28,5 +28,6 @@ Images saved as base64
 - New page for each event with detailed information and location: full info, band info, map, links: facebook, hotels, tickets.
 - Google calendar notifications.
 - Better styling.
+- Create domain.
 
 
