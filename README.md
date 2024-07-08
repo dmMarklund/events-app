@@ -22,9 +22,10 @@ Images saved as base64
 - ~~Search functionality~~
 - ~~Links to Facebook pages~~
 - ~~Exclude past events~~
-- Favorites feature
-- Automatic data updates
-- New page for each event with detailed information and location.
-- Better styling
+- Login system with Google/ Favorites feature.
+- Automatic data updates.
+- New page for each event with detailed information and location: full info, band info, map, links: facebook, hotels, tickets.
+- Google calendar notifications.
+- Better styling.
 
 
