@@ -16,12 +16,8 @@ export interface MonthYear {
 }
 
 export interface NavigationBarProps {
-  searchInput: string;
-  setSearchInput: React.Dispatch<React.SetStateAction<string>>;
   handleSearch: () => void;
   resetSearch: () => void;
   clearEvents: () => void;
   availableCities: string[];
-  selectedCity: string;
-  setSelectedCity: React.Dispatch<React.SetStateAction<string>>;
 }

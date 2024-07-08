@@ -4,12 +4,17 @@ import EventCard from "./EventCard";
 import useEvents from "../hooks/useEvents";
 import useSearch from "../hooks/useSearch";
 import { MonthYear } from "../types/types";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import { setSearchInput, setSelectedCity } from "../redux/navigationBarSlice";
 
 const getMonthName = (month: number) => {
   return new Date(0, month).toLocaleString("en-US", { month: "long" });
 };
 
 const Calendar: React.FC = () => {
+  const dispatch = useDispatch();
+
   const [currentMonth, setCurrentMonth] = useState<MonthYear>({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
@@ -21,7 +26,10 @@ const Calendar: React.FC = () => {
     setEvents([]);
   };
 
-  const [selectedCity, setSelectedCity] = useState("All");
+  const selectedCity = useSelector(
+    (state: RootState) => state.navigationBar.selectedCity
+  );
+
   const {
     allEvents,
     events,
@@ -40,7 +48,6 @@ const Calendar: React.FC = () => {
   } = useSearch({
     filterEvents,
     currentMonth,
-    selectedCity,
   });
 
   useEffect(() => {
@@ -61,14 +68,10 @@ const Calendar: React.FC = () => {
   return (
     <div className="calendar-page">
       <NavigationBar
-        searchInput={searchInput}
-        setSearchInput={setSearchInput}
         handleSearch={handleSearch}
         resetSearch={resetSearch}
         clearEvents={clearEvents}
         availableCities={availableCities}
-        selectedCity={selectedCity}
-        setSelectedCity={setSelectedCity}
       />
 
       {loading ? (

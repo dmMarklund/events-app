@@ -1,37 +1,47 @@
-import { useState } from "react";
 import { MonthYear } from "../types/types";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import {
+  setSearchInput as setReduxSearchInput,
+  setSelectedCity as setReduxSelectedCity,
+  setSearchQuery as setReduxSearchQuery,
+} from "../redux/navigationBarSlice";
 
 interface UseSearchProps {
   filterEvents: (monthYear: MonthYear, city: string, query?: string) => void;
   currentMonth: MonthYear;
-  selectedCity: string;
 }
 
-const useSearch = ({
-  filterEvents,
-  currentMonth,
-  selectedCity,
-}: UseSearchProps) => {
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+const useSearch = ({ filterEvents, currentMonth }: UseSearchProps) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const searchInput = useSelector(
+    (state: RootState) => state.navigationBar.searchInput
+  );
+  const selectedCity = useSelector(
+    (state: RootState) => state.navigationBar.selectedCity
+  );
+  const searchQuery = useSelector(
+    (state: RootState) => state.navigationBar.searchQuery
+  );
 
   const handleSearch = () => {
     navigate("/calendar");
-    setSearchQuery(searchInput);
+    dispatch(setReduxSearchQuery(searchInput));
     filterEvents(currentMonth, selectedCity, searchInput);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
-    setSearchQuery("");
-    filterEvents(currentMonth, selectedCity, "");
+    dispatch(setReduxSearchInput(""));
+    dispatch(setReduxSearchQuery(""));
+    dispatch(setReduxSelectedCity("All"));
   };
 
   return {
     searchInput,
-    setSearchInput,
+    setSearchInput: (input: string) => dispatch(setReduxSearchInput(input)),
     searchQuery,
     handleSearch,
     resetSearch,

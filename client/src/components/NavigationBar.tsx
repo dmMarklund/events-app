@@ -1,20 +1,27 @@
 import React from "react";
 import { NavigationBarProps } from "../types/types";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import { setSearchInput, setSelectedCity } from "../redux/navigationBarSlice";
 
 const NavigationBar: React.FC<NavigationBarProps> = ({
-  searchInput,
-  setSearchInput,
   handleSearch,
   resetSearch,
   clearEvents,
   availableCities,
-  selectedCity,
-  setSelectedCity,
 }) => {
+  const dispatch = useDispatch();
+  const searchInput = useSelector(
+    (state: RootState) => state.navigationBar.searchInput
+  );
+
+  const selectedCity = useSelector(
+    (state: RootState) => state.navigationBar.selectedCity
+  );
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCity = e.target.value;
-    clearEvents(); // Call clearEvents to reset events before selecting new city
-    setSelectedCity(newCity);
+    clearEvents();
+    dispatch(setSelectedCity(newCity));
   };
 
   return (
@@ -31,7 +38,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         <input
           type="text"
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={(e) => dispatch(setSearchInput(e.target.value))}
           placeholder="Search events..."
         />
         <button onClick={handleSearch} className="search-button">

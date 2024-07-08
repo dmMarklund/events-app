@@ -31,7 +31,6 @@ const EventList: React.FC = () => {
   } = useSearch({
     filterEvents,
     currentMonth,
-    selectedCity,
   });
 
   useEffect(() => {
@@ -62,14 +61,10 @@ const EventList: React.FC = () => {
   return (
     <div className="event-list-page">
       <NavigationBar
-        searchInput={searchInput}
-        setSearchInput={setSearchInput}
         handleSearch={handleSearch}
         resetSearch={resetSearch}
         clearEvents={clearEvents}
         availableCities={availableCities}
-        selectedCity={selectedCity}
-        setSelectedCity={setSelectedCity}
       />
       {loading ? (
         <div className="loading">
