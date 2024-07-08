@@ -17,7 +17,6 @@ Database pagination on server and app. Loading...
 Images saved as base64
 
 #TODO#
-- Calendar integration
 - ~~Filters by city~~
 - ~~Search functionality~~
 - ~~Links to Facebook pages~~
