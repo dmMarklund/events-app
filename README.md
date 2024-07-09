@@ -7,6 +7,8 @@ host: http://68.183.2.254:5001/
 4. Fetch data to the server on a Digital Ocean droplet.
 5. Deploy and run a React/TypeScript application to present the data.
 
+- 2024-07-08 
+  Redux for some statements. 
 - 2024-07-06
   Improved component layout. Upcoming events, hot events.
 - 2024-07-03
@@ -26,5 +28,6 @@ Images saved as base64
 - New page for each event with detailed information and location: full info, band info, map, links: facebook, hotels, tickets.
 - Google calendar notifications.
 - Better styling.
+- Create domain.
 
 
