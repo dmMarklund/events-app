@@ -4,16 +4,17 @@ import EventCard from "./EventCard";
 import useEvents from "../hooks/useEvents";
 import useSearch from "../hooks/useSearch";
 import { Event, MonthYear } from "../types/types";
+import { v4 as uuidv4 } from "uuid";
 
 const EventList: React.FC = () => {
-  const [currentMonth, setCurrentMonth] = useState<MonthYear>({
+  const [currentMonth, _] = useState<MonthYear>({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
 
-  const [selectedCity, setSelectedCity] = useState("All");
+  const [selectedCity, __] = useState("All");
 
-  const [events_, setEvents] = useState<Event[]>([]);
+  const [___, setEvents] = useState<Event[]>([]);
 
   const clearEvents = () => {
     setEvents([]);
@@ -22,13 +23,7 @@ const EventList: React.FC = () => {
   const { allEvents, events, availableCities, loading, filterEvents } =
     useEvents();
 
-  const {
-    searchInput,
-    setSearchInput,
-    searchQuery,
-    handleSearch,
-    resetSearch,
-  } = useSearch({
+  const { searchQuery, handleSearch, resetSearch } = useSearch({
     filterEvents,
     currentMonth,
   });
@@ -72,7 +67,9 @@ const EventList: React.FC = () => {
         </div>
       ) : (
         <>
-          <h1 className="list-h1">Upcoming Events</h1>
+          <h1 className="list-h1">
+            <span className="upcoming-text">Upcoming</span> Events
+          </h1>
           {getUpcomingEvents(events).length === 0 ? (
             <div className="event-grid">
               <div className="no-events-found">
@@ -83,7 +80,7 @@ const EventList: React.FC = () => {
             <div className="event-grid">
               {getUpcomingEvents(events).map((event) => (
                 <EventCard
-                  key={event.eventNumber}
+                  key={uuidv4()}
                   event={event}
                   searchTerm={searchQuery}
                 />
@@ -97,7 +94,7 @@ const EventList: React.FC = () => {
           <div className="event-grid">
             {getHotEvents(allEvents).map((event) => (
               <EventCard
-                key={event.eventNumber}
+                key={uuidv4()}
                 event={event}
                 searchTerm={searchQuery}
               />

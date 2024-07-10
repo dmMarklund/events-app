@@ -141,8 +141,14 @@ const useEvents = () => {
     }
   };
 
-  const filterEvents = (currentMonth: MonthYear, selectedCity: string) => {
-    const filteredEvents = filterEventsByMonth(allEvents, currentMonth);
+  const filterEvents = (
+    currentMonth: MonthYear | null,
+    selectedCity: string
+  ) => {
+    const filteredEvents = currentMonth
+      ? filterEventsByMonth(allEvents, currentMonth)
+      : allEvents;
+
     setEvents(
       selectedCity === "All"
         ? filteredEvents

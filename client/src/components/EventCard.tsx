@@ -47,7 +47,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, searchTerm }) => {
             ? highlightSearchTerm(event.eventName, searchTerm)
             : event.eventName}
         </h2>
-        <p>
+        <div className="event-description">
           {typeof formattedDescription === "string"
             ? formattedDescription
             : React.Children.map(
@@ -60,14 +60,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, searchTerm }) => {
                   }
                 }
               )}
-        </p>
+        </div>
         <a
           href={event.eventLink}
           className="event-link"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Event Link
+          <div className="event-link-button">f</div>
         </a>
       </div>
     </div>

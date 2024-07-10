@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-// Define the initial state using the types you defined
-interface NavigationBarState {
-  searchInput: string;
-  selectedCity: string;
-  searchQuery: string;
-}
+import { NavigationBarState } from "../types/types";
 
 const initialState: NavigationBarState = {
   searchInput: "",

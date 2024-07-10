@@ -4,23 +4,24 @@ import EventCard from "./EventCard";
 import useEvents from "../hooks/useEvents";
 import useSearch from "../hooks/useSearch";
 import { MonthYear } from "../types/types";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { setSearchInput, setSelectedCity } from "../redux/navigationBarSlice";
+import { v4 as uuidv4 } from "uuid";
 
 const getMonthName = (month: number) => {
   return new Date(0, month).toLocaleString("en-US", { month: "long" });
 };
 
 const Calendar: React.FC = () => {
-  const dispatch = useDispatch();
-
   const [currentMonth, setCurrentMonth] = useState<MonthYear>({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
-
-  const [events_, setEvents] = useState<Event[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<MonthYear | null>({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  });
+  const [_, setEvents] = useState<Event[]>([]);
 
   const clearEvents = () => {
     setEvents([]);
@@ -39,30 +40,47 @@ const Calendar: React.FC = () => {
     filterEvents,
   } = useEvents();
 
-  const {
-    searchInput,
-    setSearchInput,
-    searchQuery,
-    handleSearch,
-    resetSearch,
-  } = useSearch({
+  const { searchQuery, handleSearch, resetSearch } = useSearch({
     filterEvents,
     currentMonth,
   });
 
   useEffect(() => {
+    if (allEvents.length > 0) {
+      allEvents.sort((a, b) => {
+        return a.eventDate.getTime() - b.eventDate.getTime();
+      });
+    }
     filterEvents(currentMonth, selectedCity);
   }, [allEvents, currentMonth, selectedCity, searchQuery]);
 
-  // Ensure events are filtered correctly on the initial load
   useEffect(() => {
-    filterEvents(currentMonth, selectedCity);
+    filterEvents(null, selectedCity);
+    if (availableMonths.length > 0) {
+      setCurrentMonth({
+        month: availableMonths[0].month,
+        year: availableMonths[0].year,
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    if (selectedMonth) {
+      setCurrentMonth(selectedMonth);
+    }
+  }, [selectedMonth]);
 
   const handleMonthChange = (monthYearString: string) => {
     const [monthName, year] = monthYearString.split(" ");
     const month = new Date(`${monthName} 1, ${year}`).getMonth();
-    setCurrentMonth({ month, year: parseInt(year) });
+    const currentM_ = { month, year: parseInt(year) };
+    setCurrentMonth(currentM_);
+    setSelectedMonth(currentM_);
+  };
+
+  const handleAllEventsClick = () => {
+    setSelectedMonth(null);
+    filterEvents(null, selectedCity);
   };
 
   return (
@@ -82,10 +100,22 @@ const Calendar: React.FC = () => {
         <>
           <div className="month-selector-container">
             <div className="month-selector">
+              {/* All Events button */}
+              <div
+                className={`month-item ${
+                  selectedMonth === null ? "selected" : ""
+                }`}
+                onClick={handleAllEventsClick}
+              >
+                All Events
+              </div>
+
+              {/* Display availableMonths */}
               {availableMonths.map((monthYear) => (
                 <div
-                  key={`${monthYear.month}-${monthYear.year}`}
+                  key={uuidv4()}
                   className={`month-item ${
+                    selectedMonth &&
                     currentMonth.month === monthYear.month &&
                     currentMonth.year === monthYear.year
                       ? "selected"
@@ -121,7 +151,7 @@ const Calendar: React.FC = () => {
                 )
                 .map((event) => (
                   <EventCard
-                    key={event.eventName}
+                    key={uuidv4()}
                     event={event}
                     searchTerm={searchQuery}
                   />
